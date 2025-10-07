@@ -1,0 +1,14 @@
+google-generativeai
+google-adk
+litellm
+
+fastapi
+uvicorn[standard]
+
+httpx
+
+streamlit
+
+pydantic
+
+python-dotenv
