@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Space Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .feature h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .status-icon {
+            color: #28a745;
+            font-size: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎉</div>
+            <h1>Party Space Agent</h1>
+            <p class="subtitle">Agente Inteligente de Atendimento</p>
+        </div>
+        
+        <div class="status">
+            <span class="status-icon">✅</span>
+            <strong>Sistema Online</strong> - API funcionando normalmente
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>IA Conversacional</h3>
+                <p>Atendimento automatizado com inteligência artificial avançada</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>WhatsApp</h3>
+                <p>Integração completa com WhatsApp Business via N8N</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📅</div>
+                <h3>Reservas</h3>
+                <p>Sistema completo de verificação e criação de reservas</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>Preços</h3>
+                <p>Cálculo automático e personalizado de orçamentos</p>
+            </div>
+        </div>
+        
+        <div class="links">
+            <a href="/dev-ui" class="btn btn-primary">🎨 Developer UI</a>
+            <a href="/docs" class="btn btn-secondary">📚 API Docs</a>
+            <a href="/redoc" class="btn btn-secondary">📖 ReDoc</a>
+            <a href="/health" class="btn btn-secondary">🏥 Health</a>
+        </div>
+    </div>
+</body>
+</html>

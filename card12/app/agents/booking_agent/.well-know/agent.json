@@ -1,0 +1,4 @@
+{
+  "name": "booking_agent",
+  "description": "Agente responsável por marcar datas e criar reservas no Supabase (tabela bookings)"
+}
