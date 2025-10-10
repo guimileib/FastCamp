@@ -4,16 +4,12 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import os
 from dotenv import load_dotenv
+from app.routes import agents_routes
 
 load_dotenv()
 
-from app.routes import (
-    webhook_routes,
-    agents_routes
-)
-
-WHATSAPP_PHONE = os.getenv("WHATSAPP_PHONE_NUMBER", "+553898803424")
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678")
+WHATSAPP_PHONE = os.getenv("WHATSAPP_PHONE_NUMBER")
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
 API_DEBUG = os.getenv("API_DEBUG", "true").lower() == "true"
@@ -22,12 +18,12 @@ API_DEBUG = os.getenv("API_DEBUG", "true").lower() == "true"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("=" * 60)
-    print("🚀 Iniciando Party Agent API (Google ADK)")
+    print("Iniciando Party Agent API (Google ADK)")
     print("=" * 60)
-    print(f"📱 WhatsApp: {WHATSAPP_PHONE}")
-    print(f"🔗 N8N Webhook: {N8N_WEBHOOK_URL}")
-    print(f"🌐 API Host: {API_HOST}:{API_PORT}")
-    print("\n📍 Endpoints disponíveis:")
+    print(f"WhatsApp: {WHATSAPP_PHONE}")
+    print(f"N8N Webhook: {N8N_WEBHOOK_URL}")
+    print(f"API Host: {API_HOST}:{API_PORT}")
+    print("\nEndpoints disponíveis:")
     print("   - POST /webhook/whatsapp  (N8N Integration)")
     print("   - POST /agents/maria      (Maria Agent - ADK)")
     print("   - POST /agents/booking    (Booking Agent - ADK)")
@@ -81,8 +77,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(webhook_routes.router, tags=["Webhooks"])
 app.include_router(agents_routes.router, tags=["Agents (ADK)"])
 
 try:
