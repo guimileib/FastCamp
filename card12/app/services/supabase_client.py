@@ -1,7 +1,3 @@
-"""
-Cliente Supabase usando REST API
-Mais simples e confiável que conexão PostgreSQL direta
-"""
 import httpx
 import os
 from typing import Dict, Any, List, Optional
@@ -12,8 +8,6 @@ load_dotenv()
 
 
 class SupabaseClient:
-    """Cliente simplificado para Supabase REST API"""
-    
     def __init__(self):
         self.url = os.getenv("SUPABASE_URL")
         self.key = os.getenv("SUPABASE_KEY")
@@ -31,16 +25,6 @@ class SupabaseClient:
         self.client = httpx.AsyncClient(timeout=30.0)
     
     async def insert(self, table: str, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Insere um registro na tabela
-        
-        Exemplo:
-        >>> await supabase.insert("conversations", {
-        ...     "session_id": "whatsapp_123",
-        ...     "user_id": "5511999999999",
-        ...     "chat_id": "5511999999999@c.us"
-        ... })
-        """
         try:
             url = f"{self.base_url}/{table}"
             response = await self.client.post(url, json=data, headers=self.headers)
@@ -57,26 +41,14 @@ class SupabaseClient:
         order_by: Optional[str] = None,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """
-        Busca registros na tabela
-        
-        Exemplo:
-        >>> await supabase.select("conversations", 
-        ...     filters={"session_id": "whatsapp_123"},
-        ...     order_by="created_at.desc",
-        ...     limit=10
-        ... )
-        """
         try:
             url = f"{self.base_url}/{table}"
             params = {"limit": limit}
             
-            # Adiciona filtros
             if filters:
                 for key, value in filters.items():
                     params[key] = f"eq.{value}"
             
-            # Adiciona ordenação
             if order_by:
                 params["order"] = order_by
             
@@ -93,15 +65,6 @@ class SupabaseClient:
         filters: Dict[str, Any], 
         data: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
-        """
-        Atualiza registros na tabela
-        
-        Exemplo:
-        >>> await supabase.update("conversations",
-        ...     filters={"session_id": "whatsapp_123"},
-        ...     data={"updated_at": "2025-10-10T12:00:00"}
-        ... )
-        """
         try:
             url = f"{self.base_url}/{table}"
             params = {}
@@ -117,14 +80,6 @@ class SupabaseClient:
             return []
     
     async def delete(self, table: str, filters: Dict[str, Any]) -> bool:
-        """
-        Deleta registros da tabela
-        
-        Exemplo:
-        >>> await supabase.delete("messages",
-        ...     filters={"id": "uuid-here"}
-        ... )
-        """
         try:
             url = f"{self.base_url}/{table}"
             params = {}
@@ -140,12 +95,6 @@ class SupabaseClient:
             return False
     
     async def rpc(self, function_name: str, params: Dict[str, Any] = None) -> Any:
-        """
-        Executa uma função PostgreSQL remota (RPC)
-        
-        Exemplo:
-        >>> await supabase.rpc("get_conversation_stats", {"session_id": "whatsapp_123"})
-        """
         try:
             url = f"{self.base_url}/rpc/{function_name}"
             response = await self.client.post(url, json=params or {}, headers=self.headers)
@@ -156,9 +105,6 @@ class SupabaseClient:
             return None
     
     async def close(self):
-        """Fecha o cliente HTTP"""
         await self.client.aclose()
 
-
-# Singleton
 supabase_client = SupabaseClient()

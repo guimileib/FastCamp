@@ -203,7 +203,6 @@ async def run_agent_live(websocket: WebSocket):
             "user_id": user_id
         })
         
-        # Loop de mensagens
         while True:
             message_data = await websocket.receive_json()
             message_type = message_data.get("type", "text")
@@ -216,7 +215,6 @@ async def run_agent_live(websocket: WebSocket):
             if message_type == "close":
                 break
             
-            # Adiciona mensagem do usuário
             user_message = Message(
                 role=MessageRole.USER,
                 content=content,
@@ -224,13 +222,11 @@ async def run_agent_live(websocket: WebSocket):
             )
             session_service.add_message(session_id, user_message)
             
-            # Envia confirmação de recebimento
             await websocket.send_json({
                 "type": "message_received",
                 "content": content
             })
             
-            # Processa com o agente
             try:
                 result = await party_agent.process_message(
                     message=content,
@@ -239,7 +235,6 @@ async def run_agent_live(websocket: WebSocket):
                     context={"type": message_type}
                 )
                 
-                # Adiciona resposta do agente
                 assistant_message = Message(
                     role=MessageRole.ASSISTANT,
                     content=result.get("response", ""),
@@ -247,7 +242,6 @@ async def run_agent_live(websocket: WebSocket):
                 )
                 session_service.add_message(session_id, assistant_message)
                 
-                # Envia resposta
                 await websocket.send_json({
                     "type": "message",
                     "role": "assistant",

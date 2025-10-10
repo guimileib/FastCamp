@@ -1,8 +1,3 @@
-"""
-Rotas para sistema multi-agente
-Endpoints centralizados para interação com todos os agentes
-"""
-
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Optional, Dict, Any
 
@@ -15,8 +10,6 @@ from app.services.n8n_service import N8NService
 
 router = APIRouter(prefix="/api/v1/agents", tags=["Multi-Agent System"])
 
-
-# Dependency
 def get_n8n_service():
     return N8NService()
 
@@ -31,7 +24,7 @@ async def route_to_agent(
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
     """
-    Roteia mensagem automaticamente para o agente apropriado
+    REstrutura
     
     - **message**: Mensagem do usuário
     - **session_id**: ID da sessão
@@ -75,15 +68,13 @@ async def run_specific_agent(
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
     """
-    Executa um agente específico diretamente
-    
+    Estrutura:
     - **agent_type**: attendance, schedule, analytics, ou admin
     - **message**: Mensagem do usuário
     - **session_id**: ID da sessão
     - **user_id**: ID do usuário (opcional)
     - **context**: Contexto adicional (opcional)
     """
-    # Valida tipo de agente
     try:
         agent_enum = AgentType(agent_type)
     except ValueError:
@@ -114,9 +105,6 @@ async def run_specific_agent(
 async def get_all_capabilities(
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Retorna capabilities de todos os agentes disponíveis
-    """
     router_instance = get_router(n8n_service)
     return router_instance.get_all_capabilities()
 
@@ -126,11 +114,6 @@ async def get_agent_info(
     agent_type: str,
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Retorna informações detalhadas de um agente específico
-    
-    - **agent_type**: attendance, schedule, analytics, ou admin
-    """
     try:
         agent_enum = AgentType(agent_type)
     except ValueError:
@@ -153,21 +136,12 @@ async def suggest_agent(
     message: str,
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Sugere qual agente usar baseado na mensagem
-    Útil para UI mostrar sugestões ao usuário
-    
-    - **message**: Mensagem do usuário
-    """
     router_instance = get_router(n8n_service)
     return router_instance.suggest_agent(message)
 
 
 @router.get("/types", response_model=Dict[str, Any])
 async def list_agent_types():
-    """
-    Lista todos os tipos de agentes disponíveis
-    """
     return {
         "agent_types": [
             {
@@ -194,8 +168,7 @@ async def list_agent_types():
     }
 
 
-# Endpoints específicos por agente (atalhos)
-
+#endpoints específicos por agente 
 @router.post("/attendance/check-availability")
 async def attendance_check_availability(
     date: str,
@@ -203,9 +176,6 @@ async def attendance_check_availability(
     guest_count: Optional[int] = None,
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Atalho: Verifica disponibilidade via agente de atendimento
-    """
     router_instance = get_router(n8n_service)
     agent = router_instance.get_agent(AgentType.ATTENDANCE)
     
@@ -225,9 +195,6 @@ async def attendance_create_booking(
     guest_count: int,
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Atalho: Cria reserva via agente de atendimento
-    """
     router_instance = get_router(n8n_service)
     agent = router_instance.get_agent(AgentType.ATTENDANCE)
     
@@ -246,9 +213,6 @@ async def schedule_view_calendar(
     end_date: str,
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Atalho: Visualiza calendário via agente de agendamento
-    """
     router_instance = get_router(n8n_service)
     agent = router_instance.get_agent(AgentType.SCHEDULE)
     
@@ -266,9 +230,6 @@ async def analytics_booking_stats(
     group_by: str = "day",
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Atalho: Obtém estatísticas via agente de analytics
-    """
     router_instance = get_router(n8n_service)
     agent = router_instance.get_agent(AgentType.ANALYTICS)
     
@@ -286,9 +247,6 @@ async def admin_cancel_booking(
     refund_amount: Optional[float] = None,
     n8n_service: N8NService = Depends(get_n8n_service)
 ):
-    """
-    Atalho: Cancela reserva via agente admin
-    """
     router_instance = get_router(n8n_service)
     agent = router_instance.get_agent(AgentType.ADMIN)
     

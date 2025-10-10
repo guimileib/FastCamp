@@ -1,7 +1,3 @@
-"""
-Serviço de gerenciamento de sessões
-"""
-
 from typing import Dict, List, Optional
 from datetime import datetime
 import uuid
@@ -10,11 +6,8 @@ from loguru import logger
 from app.models.session import Session, SessionCreate, SessionResponse, Message
 
 
-class SessionService:
-    """Serviço para gerenciar sessões de conversa"""
-    
+class SessionService: 
     def __init__(self):
-        # Em produção, use um banco de dados real
         self.sessions: Dict[str, Session] = {}
     
     def create_session(
@@ -114,12 +107,10 @@ class SessionService:
         return False
     
     def get_session_messages(self, session_id: str) -> List[Message]:
-        """Obtém todas as mensagens de uma sessão"""
         session = self.sessions.get(session_id)
         return session.messages if session else []
     
     def clear_session_messages(self, session_id: str) -> bool:
-        """Limpa as mensagens de uma sessão"""
         session = self.sessions.get(session_id)
         
         if session:
@@ -130,6 +121,4 @@ class SessionService:
         
         return False
 
-
-# Singleton do serviço de sessões
 session_service = SessionService()

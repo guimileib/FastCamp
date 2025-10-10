@@ -25,7 +25,6 @@ class AgentEvent:
 
 @dataclass
 class Tool:
-    """Tool/Ferramenta que o agente pode usar"""
     name: str
     description: str
     parameters: Dict[str, Any]
@@ -34,7 +33,6 @@ class Tool:
 
 @dataclass
 class AgentContext:
-    """Contexto da execução do agente"""
     session_id: str
     user_id: str
     user_name: str
@@ -45,7 +43,6 @@ class AgentContext:
 
 @dataclass
 class AgentResponse:
-    """Resposta do agente"""
     agent_name: str
     response: str
     confidence: float
@@ -55,9 +52,7 @@ class AgentResponse:
 
 
 class BaseAgent(ABC):
-    """
-    Agente base seguindo padrão Google ADK
-    
+    """ 
     Estrutura:
     - name: Nome do agente
     - description: Descrição do propósito

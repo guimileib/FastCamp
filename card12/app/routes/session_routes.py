@@ -1,7 +1,3 @@
-"""
-Rotas de gerenciamento de sessões
-"""
-
 from fastapi import APIRouter, HTTPException, Path, Body
 from typing import Optional
 import uuid
@@ -21,7 +17,6 @@ async def get_session(
     user_id: str = Path(..., description="ID do usuário"),
     session_id: str = Path(..., description="ID da sessão")
 ):
-    """Obtém uma sessão específica"""
     session = session_service.get_session(app_name, user_id, session_id)
     
     if not session:
@@ -47,7 +42,6 @@ async def list_sessions(
     user_id: str = Path(..., description="ID do usuário"),
     exclude_eval: bool = True
 ):
-    """Lista todas as sessões de um usuário"""
     sessions = session_service.list_sessions(app_name, user_id, exclude_eval)
     
     return SessionList(
@@ -67,7 +61,6 @@ async def create_session_with_id(
     session_id: str = Path(..., description="ID da sessão"),
     session_data: SessionCreate = Body(...)
 ):
-    """Cria uma nova sessão com ID específico"""
     session = session_service.create_session(
         app_name=app_name,
         user_id=user_id,
@@ -96,7 +89,6 @@ async def create_session(
     user_id: str = Path(..., description="ID do usuário"),
     session_data: SessionCreate = Body(...)
 ):
-    """Cria uma nova sessão com ID auto-gerado"""
     session_id = session_data.session_id or str(uuid.uuid4())
     
     session = session_service.create_session(
@@ -126,7 +118,6 @@ async def delete_session(
     user_id: str = Path(..., description="ID do usuário"),
     session_id: str = Path(..., description="ID da sessão")
 ):
-    """Deleta uma sessão específica"""
     success = session_service.delete_session(app_name, user_id, session_id)
     
     if not success:

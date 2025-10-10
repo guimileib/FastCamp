@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678")
-COMPANY_PHONE = os.getenv("COMPANY_REPORT_PHONE", "+5538988030000")  # Número para receber relatórios
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
+COMPANY_PHONE = os.getenv("WHATSAPP_PHONE_NUMBER")  
 
 SYSTEM_PROMPT = """Você é um assistente que cria relatórios concisos de conversas de atendimento.
 
@@ -39,7 +39,7 @@ async def send_report_to_company(report: str) -> bool:
             )
             return response.status_code == 200
     except Exception as e:
-        print(f"❌ Erro ao enviar relatório: {e}")
+        print(f"Erro ao enviar relatório: {e}")
         return False
 
 
@@ -75,11 +75,7 @@ Gere o relatório estruturado."""
 🔔 Motivo: {trigger}
 
 {report_text}
-
----
-Gerado automaticamente pelo sistema Vila do Sol
 """
-    # enviando o relatorio
     sent = await send_report_to_company(final_report)
     
     return {

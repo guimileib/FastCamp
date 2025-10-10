@@ -84,7 +84,6 @@ async def delete_artifact(
     session_id: str,
     artifact_name: str
 ):
-    """Deleta um artifact"""
     success = artifact_service.delete_artifact(session_id, artifact_name)
     
     if not success:

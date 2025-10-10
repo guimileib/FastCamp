@@ -42,16 +42,7 @@ IMPORTANTE: Sempre confirme com o cliente antes de finalizar a reserva.
 
 
 class BookingAgent(BaseAgent):
-    """
-    Agente de Reservas - Cria e gerencia agendamentos
-    
-    Segue padrão Google ADK com:
-    - BaseAgent inheritance
-    - Tools para criar bookings no Supabase
-    - Event emission
-    - Validação de dados
-    """
-    
+
     def __init__(self):
         super().__init__(
             name="booking_agent",
@@ -60,7 +51,7 @@ class BookingAgent(BaseAgent):
             model=None
         )
         
-        # Adiciona tool de criação de booking
+        # tool de criação de booking-marcar
         self.add_tool(Tool(
             name="create_booking_supabase",
             description="Cria uma reserva no banco de dados Supabase",
@@ -77,7 +68,6 @@ class BookingAgent(BaseAgent):
         ))
     
     async def create_booking_tool(self, booking_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Tool para criar booking no Supabase"""
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{SUPABASE_URL}/rest/v1/bookings",
@@ -96,8 +86,6 @@ class BookingAgent(BaseAgent):
                 return {"success": False, "error": response.text}
     
     def extract_booking_info(self, message: str, user_name: str, phone: str) -> Dict[str, Any]:
-        """Extrai informações de reserva da mensagem"""
-        # Extrai data (formato dd/mm ou dd/mm/yyyy)
         date_match = re.search(r'(\d{1,2})[/\-](\d{1,2})(?:[/\-](\d{2,4}))?', message)
         event_date = None
         if date_match:
@@ -107,13 +95,11 @@ class BookingAgent(BaseAgent):
                 year = "20" + year
             event_date = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
         
-        # Extrai número de convidados
         guest_match = re.search(r'(\d+)\s*(pessoas|convidados|pessoas)', message.lower())
         guest_count = int(guest_match.group(1)) if guest_match else None
-        
-        # Detecta período
+
         message_lower = message.lower()
-        event_time = "18:00"  # padrão
+        event_time = "18:00"  
         if "manhã" in message_lower or "manha" in message_lower:
             event_time = "09:00"
         elif "tarde" in message_lower:
@@ -121,7 +107,6 @@ class BookingAgent(BaseAgent):
         elif "noite" in message_lower:
             event_time = "19:00"
         
-        # Detecta tipo de evento
         event_type = "festa"
         if "aniversário" in message_lower or "aniversario" in message_lower:
             event_type = "aniversário"
@@ -142,13 +127,10 @@ class BookingAgent(BaseAgent):
         }
     
     async def execute(self, context: AgentContext) -> AgentResponse:
-        """
-        Executa o agente de booking seguindo padrão ADK
-        """
-        print(f"🤖 Booking Agent: Processando mensagem de {context.user_name}")
+
+        print(f"Booking Agent: Processando mensagem de {context.user_name}")
         print(f"   Mensagem: {context.message}")
         
-        # Emite evento de processamento
         self.emit_event(EventType.MESSAGE, {
             "user": context.user_name,
             "message": context.message
@@ -157,7 +139,6 @@ class BookingAgent(BaseAgent):
         try:
             action = context.metadata.get("action", "check_info")
             
-            # Extrai informações da mensagem
             booking_info = self.extract_booking_info(
                 context.message,
                 context.user_name,
@@ -166,7 +147,6 @@ class BookingAgent(BaseAgent):
             
             print(f"   📋 Informações extraídas: {booking_info}")
             
-            # Verifica se tem informações suficientes
             missing_info = []
             if not booking_info["event_date"]:
                 missing_info.append("data do evento")
@@ -174,9 +154,8 @@ class BookingAgent(BaseAgent):
                 missing_info.append("quantidade de convidados")
             
             if missing_info and action != "create_booking":
-                # Falta informação
                 response_text = f"Ok! Para confirmar sua reserva, preciso de mais alguns detalhes:\n\n"
-                response_text += "❓ " + "\n❓ ".join(missing_info)
+                response_text += "? " + "\n? ".join(missing_info)
                 response_text += "\n\nPode me passar essas informações? 😊"
                 
                 return AgentResponse(
@@ -188,7 +167,7 @@ class BookingAgent(BaseAgent):
                     tools_used=[]
                 )
             
-            # Tem tudo, pode criar booking
+            # se tiver tudo vai criar o booking
             booking_data = {
                 "customer_name": booking_info["customer_name"],
                 "customer_phone": booking_info["customer_phone"],
@@ -202,7 +181,6 @@ class BookingAgent(BaseAgent):
                 "notes": context.message
             }
             
-            # Emite evento de tool call
             self.emit_event(EventType.TOOL_CALL, {
                 "tool": "create_booking_supabase",
                 "data": booking_data
@@ -210,7 +188,6 @@ class BookingAgent(BaseAgent):
             
             result = await self.create_booking_tool(booking_data)
             
-            # Emite evento de tool result
             self.emit_event(EventType.TOOL_RESULT, {
                 "tool": "create_booking_supabase",
                 "success": result["success"]
@@ -239,7 +216,7 @@ Em breve entrarei em contato para confirmar os detalhes e enviar o contrato! �
             else:
                 return AgentResponse(
                     agent_name=self.name,
-                    response="❌ Ops! Tive um problema ao criar a reserva. Pode tentar novamente em alguns instantes?",
+                    response="Ops! Tive um problema ao criar a reserva. Pode tentar novamente em alguns instantes?",
                     confidence=0.3,
                     events=self.events.copy(),
                     metadata={"booking_created": False, "error": result["error"]},
@@ -247,7 +224,7 @@ Em breve entrarei em contato para confirmar os detalhes e enviar o contrato! �
                 )
         
         except Exception as e:
-            print(f"   ❌ Erro no Booking Agent: {e}")
+            print(f"Erro no Booking Agent: {e}")
             import traceback
             traceback.print_exc()
             
@@ -267,15 +244,9 @@ Em breve entrarei em contato para confirmar os detalhes e enviar o contrato! �
             )
 
 
-# Instância global do agente (padrão ADK)
 booking_agent = BookingAgent()
 
 
-# Função de compatibilidade com código antigo
 async def execute(payload: dict) -> dict:
-    """
-    Interface de compatibilidade com código antigo
-    Converte para novo formato ADK
-    """
     result = await booking_agent.run(payload)
     return result
