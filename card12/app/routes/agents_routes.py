@@ -71,7 +71,7 @@ async def booking_agent_endpoint(request: AgentRequest):
             "metadata": request.metadata,
             "history": request.history,
             "chat_id": request.user_id,
-            "phone": request.metadata.get("phone", "")
+            "phone": request.metadata.get("phone", request.user_id.split('@')[0] if '@' in request.user_id else request.user_id)
         }
         
         result = await booking_agent.run(payload)
@@ -126,24 +126,30 @@ async def host_agent_endpoint(request: AgentRequest):
     print(f"Endpoint /agents/host chamado por {request.user_name}")
     
     try:
-        from app.agents.host_agent.agent import run as host_run
+        from app.agents.host_agent.agent import execute as host_execute
         
         payload = {
             "message": request.message,
             "user_name": request.user_name,
             "chat_id": request.user_id,
-            "phone": request.metadata.get("phone", ""),
-            "context": request.metadata
+            "phone": request.metadata.get("phone", request.user_id.split('@')[0] if '@' in request.user_id else request.user_id),
+            "context": request.metadata,
+            "conversation_history": request.history or []
         }
         
-        result = await host_run(payload)
+        result = await host_execute(payload)
         
+        # O host agent retorna o resultado do agente escolhido
         return AgentResponse(
-            response=result.get("response", ""),
-            agent=result.get("agent", "host_agent"),
-            confidence=result.get("confidence", 0.7),
+            response=result.get("message", result.get("response", "")),
+            agent=result.get("orchestrator", {}).get("chosen_agent", "host_agent"),
+            confidence=result.get("orchestrator", {}).get("confidence", 0.7),
             events=[],
-            metadata=result,
+            metadata={
+                "orchestrator": result.get("orchestrator", {}),
+                "report_sent": result.get("report_sent", False),
+                "original_result": result
+            },
             tools_used=[]
         )
     

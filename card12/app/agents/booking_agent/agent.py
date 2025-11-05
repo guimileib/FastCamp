@@ -4,6 +4,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from typing import Dict, Any
 import re
+from openai import AsyncOpenAI
 
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,6 +14,9 @@ load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+openai_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 SYSTEM_PROMPT = """Você é um assistente especializado em agendamento de eventos do Espaço Vila do Sol.
 
@@ -68,6 +72,7 @@ class BookingAgent(BaseAgent):
         ))
     
     async def create_booking_tool(self, booking_data: Dict[str, Any]) -> Dict[str, Any]:
+        print(f"   📤 Enviando para Supabase: {booking_data}")
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{SUPABASE_URL}/rest/v1/bookings",
@@ -80,12 +85,65 @@ class BookingAgent(BaseAgent):
                 json=booking_data
             )
             
+            print(f"   📥 Supabase status: {response.status_code}")
+            if response.status_code not in [200, 201]:
+                print(f"   ❌ Erro Supabase: {response.text}")
+            
             if response.status_code in [200, 201]:
                 return {"success": True, "booking": response.json()}
             else:
                 return {"success": False, "error": response.text}
     
-    def extract_booking_info(self, message: str, user_name: str, phone: str) -> Dict[str, Any]:
+    async def extract_booking_info_with_llm(self, message: str, user_name: str, phone: str) -> Dict[str, Any]:
+        """Extrai informações de reserva usando LLM para melhor compreensão"""
+        extraction_prompt = f"""Analise esta mensagem e extraia as informações de reserva em formato JSON:
+
+MENSAGEM DO CLIENTE:
+"{message}"
+
+EXTRAIA:
+- event_date: data no formato YYYY-MM-DD (se mencionada, use ano 2025 se não especificado)
+- event_time: horário no formato HH:MM (manhã=09:00, tarde=14:00, noite=19:00, padrão=18:00)
+- guest_count: número de convidados (apenas número inteiro)
+- event_type: tipo do evento (aniversário, casamento, formatura, festa infantil, festa, etc)
+
+RETORNE APENAS um JSON válido:
+{{
+  "event_date": "2025-12-25" ou null,
+  "event_time": "18:00",
+  "guest_count": 100 ou null,
+  "event_type": "festa"
+}}
+
+Se alguma informação não foi mencionada, use null."""
+
+        try:
+            response = await openai_client.chat.completions.create(
+                model=MODEL,
+                messages=[
+                    {"role": "system", "content": "Você é um extrator de informações. Retorne APENAS JSON válido, sem explicações."},
+                    {"role": "user", "content": extraction_prompt}
+                ],
+                temperature=0.1,
+                max_tokens=150
+            )
+            
+            import json
+            extracted = json.loads(response.choices[0].message.content.strip())
+            
+            # Adiciona nome e telefone
+            extracted["customer_name"] = user_name
+            extracted["customer_phone"] = phone
+            
+            print(f"   🤖 LLM Extraction: {extracted}")
+            return extracted
+            
+        except Exception as e:
+            print(f"   ⚠️ Erro na extração LLM: {e}, usando fallback...")
+            return self.extract_booking_info_fallback(message, user_name, phone)
+    
+    def extract_booking_info_fallback(self, message: str, user_name: str, phone: str) -> Dict[str, Any]:
+        """Extração de fallback usando regex (backup)"""
         date_match = re.search(r'(\d{1,2})[/\-](\d{1,2})(?:[/\-](\d{2,4}))?', message)
         event_date = None
         if date_match:
@@ -139,7 +197,8 @@ class BookingAgent(BaseAgent):
         try:
             action = context.metadata.get("action", "check_info")
             
-            booking_info = self.extract_booking_info(
+            # Usa LLM para extrair informações
+            booking_info = await self.extract_booking_info_with_llm(
                 context.message,
                 context.user_name,
                 context.metadata.get("phone", "")
@@ -168,17 +227,16 @@ class BookingAgent(BaseAgent):
                 )
             
             # se tiver tudo vai criar o booking
+            # NOTA: Estrutura adaptada baseada na tabela Supabase
             booking_data = {
-                "customer_name": booking_info["customer_name"],
-                "customer_phone": booking_info["customer_phone"],
-                "chat_id": context.user_id,
-                "event_date": booking_info["event_date"],
-                "event_time": booking_info["event_time"],
-                "guest_count": booking_info["guest_count"],
-                "event_type": booking_info["event_type"],
+                "name": booking_info["customer_name"],
+                "phone": booking_info["customer_phone"],
+                "date": booking_info["event_date"],
+                "time": booking_info["event_time"],
+                "guests": booking_info["guest_count"],
+                "type": booking_info["event_type"],
                 "status": "pending",
-                "created_at": datetime.now().isoformat(),
-                "notes": context.message
+                "message": context.message
             }
             
             self.emit_event(EventType.TOOL_CALL, {

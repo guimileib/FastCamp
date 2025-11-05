@@ -95,12 +95,19 @@ class BaseAgent(ABC):
         pass
     
     async def run(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        # Mescla metadata com campos importantes do payload
+        metadata = payload.get("metadata", {}).copy()
+        
+        # Adiciona phone ao metadata se existir no payload
+        if "phone" in payload and payload["phone"]:
+            metadata["phone"] = payload["phone"]
+        
         context = AgentContext(
             session_id=payload.get("session_id", str(uuid.uuid4())),
             user_id=payload.get("user_id", payload.get("chat_id", "unknown")),
             user_name=payload.get("user_name", "Cliente"),
             message=payload.get("message", ""),
-            metadata=payload.get("metadata", {}),
+            metadata=metadata,
             history=payload.get("history", [])
         )
         
