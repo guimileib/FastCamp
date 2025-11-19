@@ -1,6 +1,10 @@
-## Prompt para testar a Triagem
+# Medical AI Agents - Triagem Médica
 
-## Caso Clínico
+## Overview
+Teste de prompt para o agente de triagem médica, simulando a análise de um caso clínico.
+
+
+## Prompt para Triagem Médica [Português]
 PACIENTE: Sexo masculino, 58 anos.
 QUEIXA PRINCIPAL: Dor no peito e falta de ar aos esforços.
 
@@ -18,3 +22,43 @@ PA: 150/95 mmHg. FC: 88 bpm.
 Ausculta Cardíaca: Ritmo regular em 2 tempos, sem sopros, presença de B4 audível.
 Pulmões: Murmúrios vesiculares presentes, sem ruídos adventícios.
 Extremidades: Sem edema, pulsos periféricos palpáveis e simétricos.
+
+---
+## Prompt para Triagem Médica [Inglês]
+SUBJECTIVE:
+The patient is a 58-year-old male presenting with a chief complaint of substernal chest pain. He describes the pain as a pressure-like sensation, rating it a 6/10 in severity. The pain radiates to the left arm and jaw. He notes that the symptoms are precipitated by exertion, specifically walking uphill or climbing stairs, and are relieved by rest within 5 to 10 minutes. He denies any recent trauma to the chest. He reports associated shortness of breath but denies nausea, vomiting, or syncope.
+
+PAST MEDICAL HISTORY:
+Significant for Hypertension and Hyperlipidemia. He is a current smoker, smoking half a pack per day for the last 30 years.
+
+MEDICATIONS:
+Lisinopril 10mg daily, Atorvastatin 20mg daily.
+
+PHYSICAL EXAMINATION:
+Vital Signs: BP 152/92, HR 86, RR 18, O2 Sat 97% on room air.
+General: Patient appears anxious but in no acute distress.
+Cardiovascular: Regular rate and rhythm. S1 and S2 normal. No murmurs, rubs, or gallops noted.
+Lungs: Clear to auscultation bilaterally.
+Abdomen: Soft, non-tender, non-distended.
+
+ASSESSMENT:
+1. Angina Pectoris, stable vsSUBJECTIVE:
+The patient is a 58-year-old male presenting with a chief complaint of substernal chest pain. He describes the pain as a pressure-like sensation, rating it a 6/10 in severity. The pain radiates to the left arm and jaw. He notes that the symptoms are precipitated by exertion, specifically walking uphill or climbing stairs, and are relieved by rest within 5 to 10 minutes. He denies any recent trauma to the chest. He reports associated shortness of breath but denies nausea, vomiting, or syncope.
+
+PAST MEDICAL HISTORY:
+Significant for Hypertension and Hyperlipidemia. He is a current smoker, smoking half a pack per day for the last 30 years.
+
+MEDICATIONS:
+Lisinopril 10mg daily, Atorvastatin 20mg daily.
+
+PHYSICAL EXAMINATION:
+Vital Signs: BP 152/92, HR 86, RR 18, O2 Sat 97% on room air.
+General: Patient appears anxious but in no acute distress.
+Cardiovascular: Regular rate and rhythm. S1 and S2 normal. No murmurs, rubs, or gallops noted.
+Lungs: Clear to auscultation bilaterally.
+Abdomen: Soft, non-tender, non-distended.
+
+ASSESSMENT:
+1. Angina Pectoris, stable vs unstable.
+2. Hypertension, uncontrolled.
+3. Hyperlipidemia.
