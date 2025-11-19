@@ -1,44 +1,4 @@
 .env 
 venv
-GUIA_IMPLEMENTACAO.md
-PASSO_A_PASSO_IMPLEMENTACAO.md
-PRD_Agentes_Inteligentes_Medicos.md
 
 
-data/raw/
-data/embeddings/
-data/models/
-*.csv
-*.txt
-*.pkl
-*.pth
-*.bin
-
-# Cache
-cache/
-*.cache
-.cache/
-
-# Logs
-logs/
-*.log
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Temporary
-tmp/
-temp/
-*.tmp

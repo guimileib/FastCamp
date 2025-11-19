@@ -1,7 +1,11 @@
 from agents.base_agent import BaseAgent
+from .task_manager import DiagnosticTaskManager
 
 class DiagnosticAgent(BaseAgent):
-    """Agente focado em identificar sintomas e hipóteses diagnósticas."""
+    def __init__(self):
+        super().__init__()
+        self.task_manager = DiagnosticTaskManager()
+
     def analyze(self, transcription, triage_info):
         prompt = f"""
         Você é um Agente Especialista em Diagnóstico Clínico.

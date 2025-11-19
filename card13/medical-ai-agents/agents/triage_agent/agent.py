@@ -1,7 +1,11 @@
 from agents.base_agent import BaseAgent
+from .task_manager import TriageTaskManager
 
 class TriageAgent(BaseAgent):
-    """Agente responsável por identificar a especialidade e a urgência do caso."""
+    def __init__(self):
+        super().__init__()
+        self.task_manager = TriageTaskManager()
+
     def analyze(self, transcription):
         prompt = f"""
         Você é um Agente de Triagem Médica Sênior.

@@ -1,7 +1,11 @@
 from agents.base_agent import BaseAgent
+from .task_manager import TreatmentTaskManager
 
 class TreatmentAgent(BaseAgent):
-    """Agente focado em planos de tratamento e recomendações."""
+    def __init__(self):
+        super().__init__()
+        self.task_manager = TreatmentTaskManager()
+
     def analyze(self, transcription, diagnostic_info):
         prompt = f"""
         Você é um Agente Especialista em Terapêutica e Tratamentos.
