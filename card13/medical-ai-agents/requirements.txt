@@ -1,50 +1,8 @@
-# CORE AI & AGENTS
-google-generativeai==0.3.2
-google-ai-generativelanguage==0.4.0
+pandas
+google-generativeai>=0.7.0
+python-dotenv
+streamlit
+fastapi
+uvicorn
 
-# NLP & MEDICAL TEXT PROCESSING
-spacy==3.7.2
-scispacy==0.5.3
-sentence-transformers==2.2.2
-transformers==4.36.0
-torch==2.1.0
-tokenizers==0.15.0
 
-# DATA PROCESSING
-pandas==2.1.4
-numpy==1.26.2
-scikit-learn==1.3.2
-
-# VECTOR SEARCH & EMBEDDINGS
-faiss-cpu==1.7.4
-chromadb==0.4.22
-
-# VISUALIZATION
-matplotlib==3.8.2
-seaborn==0.13.0
-plotly==5.18.0
-wordcloud==1.9.3
-
-# INTERFACE
-streamlit==1.29.0
-gradio==4.13.0
-
-# UTILITIES
-python-dotenv==1.0.0
-loguru==0.7.2
-pydantic==2.5.3
-tqdm==4.66.1
-requests==2.31.0
-beautifulsoup4==4.12.2
-
-# DATA DOWNLOAD
-kaggle==1.5.16
-
-# TESTING
-pytest==7.4.3
-pytest-asyncio==0.21.1
-
-# JUPYTER (para análise)
-jupyter==1.0.0
-ipykernel==6.27.1
-ipywidgets==8.1.1
